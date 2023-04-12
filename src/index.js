@@ -1,23 +1,23 @@
-"use strict";
+'use strict';
 
-require("dotenv/config");
-const express = require("express");
-const MongoStore = require("connect-mongo");
-const morgan = require("morgan");
-const passport = require("passport");
-const session = require("express-session");
+require('dotenv/config');
+const express = require('express');
+const MongoStore = require('connect-mongo');
+const morgan = require('morgan');
+const passport = require('passport');
+const session = require('express-session');
 
-const personRouter = require("./router/person");
-const { errorHandler } = require("./utils/errors");
-const authRouter = require("./router/auth");
+const personRouter = require('./router/person');
+const { errorHandler } = require('./utils/errors');
+const authRouter = require('./router/auth');
 const sanitizeBody = require('./middleware/sanitizeBody');
 
-require("./utils/db");
+require('./utils/db');
 
 const app = express();
 
 app.use(express.json());
-app.use(morgan("tiny"));
+app.use(morgan('tiny'));
 
 app.use(
   session({
@@ -35,9 +35,9 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get("/", (_req, res) => res.send("Server running"));
-app.use("/auth", authRouter);
-app.use("/api/person", sanitizeBody, personRouter);
+app.get('/', (_req, res) => res.send('Server running'));
+app.use('/auth', authRouter);
+app.use('/api/person', sanitizeBody, personRouter);
 
 app.use(errorHandler);
 

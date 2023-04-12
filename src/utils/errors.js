@@ -1,10 +1,10 @@
-"use strict";
+'use strict';
 
-const createDebug = require("debug");
-const debug = createDebug("app:ErrorHandler");
+const createDebug = require('debug');
+const debug = createDebug('app:ErrorHandler');
 
 class ApiError extends Error {
-  name = "ApiError";
+  name = 'ApiError';
   status = 500;
 
   constructor(message) {
@@ -13,22 +13,22 @@ class ApiError extends Error {
 }
 
 class NotFoundError extends ApiError {
-  name = "NotFoundError";
+  name = 'NotFoundError';
   status = 404;
 }
 
 class UnauthorizedError extends ApiError {
-  name = "UnauthorizedError";
+  name = 'UnauthorizedError';
   status = 401;
 }
 
 class ForbiddenError extends ApiError {
-  name = "ForbiddenError";
+  name = 'ForbiddenError';
   status = 403;
 }
 
 class BadRequestError extends ApiError {
-  name = "BadRequestError";
+  name = 'BadRequestError';
   status = 400;
 }
 
@@ -42,7 +42,7 @@ const errorHandler = (error, _req, res, _next) => {
     return;
   }
 
-  if (error.name === "ValidationError") {
+  if (error.name === 'ValidationError') {
     res.status(400).json({
       error: error.message,
     });
@@ -50,7 +50,7 @@ const errorHandler = (error, _req, res, _next) => {
   }
 
   res.status(500).json({
-    error: "Something went wrong",
+    error: 'Something went wrong',
   });
 };
 

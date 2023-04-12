@@ -4,17 +4,15 @@ const { Person, Gifts, Gift } = require('../models/person');
 
 const { BadRequestError, NotFoundError } = require('../utils/errors');
 
-const getAll = async () => {
-  const person = await Person.find();
-  return person;
-};
-
+// Returns One person by id
 const getOne = async (id) => {
   const foundPerson = await Person.findById(id);
+
   if (!foundPerson) throw new NotFoundError(`Person with id ${id} not found`);
   return foundPerson;
 };
-//create person
+
+//create a new person
 const create = async (name, dateOfBirth) => {
   const newPerson = new Person({
     name,
@@ -24,13 +22,13 @@ const create = async (name, dateOfBirth) => {
   return newPerson;
 };
 
-//create gift for person
+//add a gift for a given person
 const createGift = async (personId, name, url, store) => {
   //find the person id first
   const person = await Person.findById(personId);
 
   if (!person) {
-    //  TODO:
+    //  TODO: error out
     console.log('person not found');
   }
 
@@ -40,31 +38,10 @@ const createGift = async (personId, name, url, store) => {
     store: store,
   });
 
-  const result = person.gifts.push(gift);
-  console.log(result);
+  person.gifts.push(gift);
 
   await person.save();
   return person;
-};
-
-const replace = async (id, personData) => {
-  if (!personData.name || !personData.dateOfBirth)
-    throw new BadRequestError('Name & dob are required');
-
-  const replacedPerson = await Person.findByIdAndUpdate(
-    id,
-    {
-      ...personData,
-    },
-    {
-      returnOriginal: false,
-    }
-  );
-
-  if (!replacedPerson)
-    throw new NotFoundError(`Person with id ${id} not found`);
-
-  return replacedPerson;
 };
 
 const update = async (id, updatedFields) => {
@@ -94,11 +71,9 @@ const deleteOne = async (id) => {
 };
 
 module.exports = {
-  getAll,
   getOne,
   create,
   createGift,
-  replace,
   update,
   deleteOne,
 };

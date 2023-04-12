@@ -1,15 +1,6 @@
 //const PersonService = require("../services/person");
 const PersonService = require('../services/person');
 
-const getAll = async (_req, res, next) => {
-  try {
-    const person = await PersonService.getAll();
-    res.json({ data: person });
-  } catch (error) {
-    next(error);
-  }
-};
-
 const getOne = async (req, res, next) => {
   try {
     const person = await PersonService.getOne(req.params.id);
@@ -34,26 +25,15 @@ const createGift = async (req, res, next) => {
     const personId = req.params.personId;
     const { name, url, store } = req.sanitizedBody;
     console.log(personId, name, url, store);
-    //const createdPerson = await PersonService.create(name, url, store);
-    res.status(201).json({ data: null });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const replace = async (req, res, next) => {
-  try {
-    const replacedPerson = await PersonService.replace(
-      req.params.id,
-      req.sanitizedBody
-    );
-    res.json({ data: replacedPerson });
+    const person = await PersonService.createGift(personId, name, url, store);
+    res.status(201).json({ data: person });
   } catch (error) {
     next(error);
   }
 };
 
 const update = async (req, res, next) => {
+  // console.log('val', req.params.id, req.sanitizedBody);
   try {
     const updatedPerson = await PersonService.update(
       req.params.id,
@@ -76,11 +56,9 @@ const deleteOne = async (req, res, next) => {
 };
 
 module.exports = {
-  getAll,
   getOne,
   create,
   createGift,
-  replace,
   update,
   deleteOne,
 };

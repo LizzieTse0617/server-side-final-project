@@ -1,25 +1,23 @@
-const  mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const giftSchema = new mongoose.Schema({
+const giftSchema = new mongoose.Schema(
+  {
     name: { type: String, required: true },
     url: { type: String },
-    store: { type: String }
+    store: { type: String },
   },
-  {timestamps: true}
-  
-  );
-  const personSchema = new mongoose.Schema({
+  { timestamps: true }
+);
+const personSchema = new mongoose.Schema(
+  {
     name: { type: String, required: true },
     dateOfBirth: { type: Date, required: true },
-    gifts: [giftSchema]
+    gifts: [giftSchema],
   },
-  {timestamps: true}
-  
-  );
+  { timestamps: true }
+);
 
-
-
-module.exports =
-{ Person: mongoose.model("person", personSchema),
-Gift: mongoose.model("gift", giftSchema) }
-
+module.exports = {
+  Person: mongoose.model('person', personSchema),
+  Gift: mongoose.model('gift', giftSchema),
+};
