@@ -1,9 +1,9 @@
-"use strict";
+'use strict';
 
-const passport = require("passport");
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
-const User = require("../models/user");
+const User = require('../models/user');
 
 passport.use(
   new GoogleStrategy(
@@ -13,13 +13,11 @@ passport.use(
       callbackURL: process.env.GOOGLE_CALLBACK_URL,
     },
     async function (_accessToken, _refreshToken, profile, cb) {
-
-
-      //in here, we have added a JSONwebtoken, 
+      //in here, we have added a JSONwebtoken,
       try {
         const user = await User.findOneAndUpdate(
           {
-            googleId: profile.id,
+            googleId: profile.id, //101381449790741181024
           },
           {
             $set: {
@@ -29,7 +27,7 @@ passport.use(
           },
           {
             upsert: true,
-            returnDocument: "after",
+            returnDocument: 'after',
           }
         );
         cb(null, user);

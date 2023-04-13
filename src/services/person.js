@@ -1,11 +1,17 @@
 'use strict';
 
 const { Person, Gifts, Gift } = require('../models/person');
-
+const mongoose = require('mongoose');
 const { BadRequestError, NotFoundError } = require('../utils/errors');
 
-const getAll = async () => {
-  const person = await Person.find();
+const getAll = async (ownersId) => {
+  //ownerId refers to the field you created in Schema : _id: 6436f8c4a3c2926a12e9d40c
+  //ownersId refers to the value you obtained in Google
+
+  const idObject = new mongoose.Types.ObjectId(ownersId);
+  console.log('ownersId: ', ownersId, 'idobject', idObject);
+  const person = await Person.find({ ownerId: idObject });
+  //const person = await Person.find();
   return person;
 };
 
@@ -18,10 +24,11 @@ const getOne = async (id) => {
 };
 
 //create a new person
-const create = async (name, dateOfBirth) => {
+const create = async (name, dateOfBirth, ownerId) => {
   const newPerson = new Person({
     name,
     dateOfBirth,
+    ownerId,
   });
   await newPerson.save();
   return newPerson;

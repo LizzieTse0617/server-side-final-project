@@ -11,6 +11,14 @@ const giftSchema = new mongoose.Schema(
 const personSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
+
+    //TODO: right now, we have to add a ownerId to let database know which person is signing in with their token
+    ownerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+
     dateOfBirth: { type: Date, required: true },
     gifts: [giftSchema],
   },

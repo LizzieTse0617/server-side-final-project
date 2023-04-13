@@ -1,9 +1,10 @@
 //const PersonService = require("../services/person");
 const PersonService = require('../services/person');
 
-const getAll = async (_req, res, next) => {
+const getAll = async (req, res, next) => {
   try {
-    const person = await PersonService.getAll();
+    const person = await PersonService.getAll(req.user._id);
+
     res.json({ data: person });
   } catch (error) {
     next(error);
@@ -21,7 +22,15 @@ const getOne = async (req, res, next) => {
 const create = async (req, res, next) => {
   try {
     const { name, dateOfBirth } = req.sanitizedBody;
-    const createdPerson = await PersonService.create(name, dateOfBirth);
+
+    //TODO:
+    //right now, we have objectId parameter, which is used for differentiate different google user//and we have to add google user to the data when they try to create sth (under their acc)
+    const createdPerson = await PersonService.create(
+      name,
+      dateOfBirth,
+      req.user._id
+    );
+    console.log(createdPerson);
     res.status(201).json({ data: createdPerson });
   } catch (error) {
     next(error);

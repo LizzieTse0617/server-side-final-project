@@ -28,13 +28,15 @@ authRouter.get(
     // lookup the state from googl
     const { state } = req.query;
     // define redirectUrl from the state or default to '/api/pokemon'
-    const redirectUrl = state ?? '/api/pokemon';
+    const redirectUrl = state ?? '/api/person';
 
     // get the user's id
     const id = req.user._id.toString();
 
     // create the token
     const token = jwt.sign({ id }, process.env.JWT_SECRET);
+
+    console.log('id:', id, 'token:', token);
 
     //redirect with the token
     res.redirect(`${redirectUrl}?token=${token}`);
