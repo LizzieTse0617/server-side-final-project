@@ -1,20 +1,25 @@
+/*
+
+Authors: Serdar Ulutas, Lizzie Tse
+
+*/
+
 'use strict';
 
 require('dotenv/config');
 const cors = require('cors');
 const helmet = require('helmet');
 const expressSanitize = require('express-mongo-sanitize');
-
 const express = require('express');
 const MongoStore = require('connect-mongo');
 const morgan = require('morgan');
 const passport = require('passport');
 const session = require('express-session');
+const sanitizeBody = require('./middleware/sanitizeBody');
 
 const personRouter = require('./router/person');
 const { errorHandler } = require('./utils/errors');
 const authRouter = require('./router/auth');
-const sanitizeBody = require('./middleware/sanitizeBody');
 
 require('./utils/db');
 
