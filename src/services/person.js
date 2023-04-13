@@ -44,7 +44,7 @@ const createGift = async (personId, name, url, store, ownerId) => {
   const idObject = new mongoose.Types.ObjectId(ownerId);
 
   const person = await Person.findOne({ _id: personId, ownerId: idObject });
-
+  console.log(personId, ownerId);
   if (!person) {
     //  TODO: revise the error message
     throw new ForbiddenError(`You are not the owner of this document`);
@@ -89,11 +89,14 @@ const update = async (id, updatedFields, ownerId) => {
   return updatedPerson;
 };
 
-const updateGift = async (personId, giftId, updatedFields) => {
+const updateGift = async (personId, ownerId, giftId, updatedFields) => {
+  //meaning ownerId change to idObject use mongoose filter
+  const idObject = new mongoose.Types.ObjectId(ownerId);
+
   if (!Object.keys(updatedFields).length)
     throw new BadRequestError('Nothing to update');
 
-  const person = await Person.findById(personId);
+  const person = await Person.findOne({ _id: personId, ownerId: idObject });
   if (!person) throw new NotFoundError(`Person with id ${personId} not found`);
 
   const idx = person.gifts.findIndex((gift) => gift._id.toString() === giftId);
@@ -121,16 +124,26 @@ const updateGift = async (personId, giftId, updatedFields) => {
   return person;
 };
 
-const deleteOne = async (id) => {
-  const deletedPerson = await Person.findByIdAndDelete(id);
+const deleteOne = async (id, ownerId) => {
+  const idObject = new mongoose.Types.ObjectId(ownerId);
+
+  const deletedPerson = await Person.findOneAndDelete({
+    _id: id,
+    ownerId: idObject,
+  });
 
   if (!deletedPerson) throw new NotFoundError(`Person with id ${id} not found`);
 
   return deletedPerson;
 };
 
-const deleteOneGift = async (personId, giftId) => {
-  const person = await Person.findById(personId);
+const deleteOneGift = async (personId, giftId, ownerId) => {
+  const idObject = new mongoose.Types.ObjectId(ownerId);
+
+  const person = await Person.findOne({
+    _id: personId,
+    ownerId: idObject,
+  });
 
   if (!person) throw new NotFoundError(`Person with id ${personId} not found`);
 

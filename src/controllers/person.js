@@ -40,7 +40,6 @@ const create = async (req, res, next) => {
     next(error);
   }
 };
-
 const createGift = async (req, res, next) => {
   try {
     const personId = req.params.personId;
@@ -59,44 +58,48 @@ const createGift = async (req, res, next) => {
     next(error);
   }
 };
-
 const update = async (req, res, next) => {
   // console.log('val', req.params.id, req.sanitizedBody);
   const ownerId = req.user._id;
   const personId = req.params.id;
 
   try {
-    const updatedPerson = await PersonService.update(
+    const updatedGift = await PersonService.update(
       personId,
       req.sanitizedBody,
       ownerId
     );
 
-    res.json({ data: updatedPerson });
+    res.json({ data: updatedGift });
   } catch (error) {
     next(error);
   }
 };
-
 const updateGift = async (req, res, next) => {
   // console.log('val', req.params.id, req.sanitizedBody);
-  const { personId, giftId } = req.params;
+
+  const { giftId, personId } = req.params;
+  const ownerId = req.user._id;
   try {
-    const updatedPerson = await PersonService.updateGift(
+    const updatedGift = await PersonService.updateGift(
       personId,
+      ownerId,
       giftId,
       req.sanitizedBody
     );
 
-    res.json({ data: updatedPerson });
+    res.json({ data: updatedGift });
   } catch (error) {
     next(error);
   }
 };
-
 const deleteOne = async (req, res, next) => {
   try {
-    const deletedPerson = await PersonService.deleteOne(req.params.id);
+    const deletedPerson = await PersonService.deleteOne(
+      req.params.id,
+      req.user._id
+    );
+    console.log(deletedPerson);
     res.json({ data: deletedPerson });
   } catch (error) {
     next(error);
@@ -104,10 +107,12 @@ const deleteOne = async (req, res, next) => {
 };
 
 const deleteOneGift = async (req, res, next) => {
+  const ownerId = req.user._id;
+
   try {
     const { personId, giftId } = req.params;
 
-    const person = await PersonService.deleteOneGift(personId, giftId);
+    const person = await PersonService.deleteOneGift(personId, giftId, ownerId);
     res.json({ data: person });
   } catch (error) {
     next(error);
