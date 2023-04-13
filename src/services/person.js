@@ -3,23 +3,27 @@
 const { Person, Gifts, Gift } = require('../models/person');
 const mongoose = require('mongoose');
 const { BadRequestError, NotFoundError } = require('../utils/errors');
+const { ForbiddenError } = require('../utils/errors');
 
 const getAll = async (ownersId) => {
   //ownerId refers to the field you created in Schema : _id: 6436f8c4a3c2926a12e9d40c
   //ownersId refers to the value you obtained in Google
 
   const idObject = new mongoose.Types.ObjectId(ownersId);
-  console.log('ownersId: ', ownersId, 'idobject', idObject);
+  //console.log('ownersId: ', ownersId, 'idobject', idObject);
   const person = await Person.find({ ownerId: idObject });
   //const person = await Person.find();
   return person;
 };
 
 // Returns One person by id
-const getOne = async (id) => {
-  const foundPerson = await Person.findById(id);
+const getOne = async (personId, ownersId) => {
+  const idObject = new mongoose.Types.ObjectId(ownersId);
+  // const foundPerson = await Person.findById(personId);
+  const foundPerson = await Person.find({ _id: personId, ownerId: idObject });
 
-  if (!foundPerson) throw new NotFoundError(`Person with id ${id} not found`);
+  if (!foundPerson)
+    throw new NotFoundError(`Person with id ${personId} not found`);
   return foundPerson;
 };
 
@@ -35,13 +39,15 @@ const create = async (name, dateOfBirth, ownerId) => {
 };
 
 //add a gift for a given person
-const createGift = async (personId, name, url, store) => {
+const createGift = async (personId, name, url, store, ownerId) => {
   //find the person id first
-  const person = await Person.findById(personId);
+  const idObject = new mongoose.Types.ObjectId(ownerId);
+
+  const person = await Person.findOne({ _id: personId, ownerId: idObject });
 
   if (!person) {
-    //  TODO: error out
-    console.log('person not found');
+    //  TODO: revise the error message
+    throw new ForbiddenError(`You are not the owner of this document`);
   }
 
   const gift = new Gift({
@@ -56,17 +62,26 @@ const createGift = async (personId, name, url, store) => {
   return person;
 };
 
-const update = async (id, updatedFields) => {
+const update = async (id, updatedFields, ownerId) => {
   if (!Object.keys(updatedFields).length)
     throw new BadRequestError('Nothing to update');
-  const updatedPerson = await Person.findByIdAndUpdate(
-    id,
-    {
-      ...updatedFields,
-    },
-    {
-      returnOriginal: false,
-    }
+
+  const idObject = new mongoose.Types.ObjectId(ownerId);
+
+  // const updatedPerson = await Person.findByIdAndUpdate(
+  //   id,
+  //   {
+  //     ...updatedFields,
+  //   },
+  //   {
+  //     returnOriginal: false,
+  //   }
+  // );
+
+  const updatedPerson = await Person.findOneAndUpdate(
+    { _id: id, ownerId: idObject },
+    { ...updatedFields },
+    { returnOriginal: false }
   );
 
   if (!updatedPerson) throw new NotFoundError(`Person with id ${id} not found`);

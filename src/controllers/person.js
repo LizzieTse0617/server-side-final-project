@@ -10,9 +10,13 @@ const getAll = async (req, res, next) => {
     next(error);
   }
 };
+
+// returns Person
 const getOne = async (req, res, next) => {
   try {
-    const person = await PersonService.getOne(req.params.id);
+    const personId = req.params.id;
+    const userId = req.user._id;
+    const person = await PersonService.getOne(personId, userId);
     res.json({ data: person });
   } catch (error) {
     next(error);
@@ -41,8 +45,15 @@ const createGift = async (req, res, next) => {
   try {
     const personId = req.params.personId;
     const { name, url, store } = req.sanitizedBody;
+    const ownerId = req.user._id;
 
-    const person = await PersonService.createGift(personId, name, url, store);
+    const person = await PersonService.createGift(
+      personId,
+      name,
+      url,
+      store,
+      ownerId
+    );
     res.status(201).json({ data: person });
   } catch (error) {
     next(error);
@@ -51,10 +62,14 @@ const createGift = async (req, res, next) => {
 
 const update = async (req, res, next) => {
   // console.log('val', req.params.id, req.sanitizedBody);
+  const ownerId = req.user._id;
+  const personId = req.params.id;
+
   try {
     const updatedPerson = await PersonService.update(
-      req.params.id,
-      req.sanitizedBody
+      personId,
+      req.sanitizedBody,
+      ownerId
     );
 
     res.json({ data: updatedPerson });
