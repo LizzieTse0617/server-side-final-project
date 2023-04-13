@@ -1,6 +1,10 @@
 'use strict';
 
 require('dotenv/config');
+const cors = require('cors');
+const helmet = require('helmet');
+const expressSanitize = require('express-mongo-sanitize');
+
 const express = require('express');
 const MongoStore = require('connect-mongo');
 const morgan = require('morgan');
@@ -16,6 +20,13 @@ require('./utils/db');
 
 const app = express();
 
+app.use(helmet());
+app.use(expressSanitize());
+app.use(
+  cors({
+    origin: process.env.CORS_WHITELIST.split(','),
+  })
+);
 app.use(express.json());
 app.use(morgan('tiny'));
 
