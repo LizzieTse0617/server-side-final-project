@@ -16,6 +16,7 @@ const morgan = require('morgan');
 const passport = require('passport');
 const session = require('express-session');
 const sanitizeBody = require('./middleware/sanitizeBody');
+const compression = require('compression');
 
 const personRouter = require('./router/person');
 const { errorHandler } = require('./utils/errors');
@@ -26,6 +27,7 @@ require('./utils/db');
 const app = express();
 
 app.use(helmet());
+app.use(compression());
 app.use(expressSanitize());
 app.use(
   cors({
