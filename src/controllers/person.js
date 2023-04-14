@@ -2,16 +2,16 @@
 const PersonService = require('../services/person');
 
 const getAll = async (req, res, next) => {
+  // TODO: make sure people object only has "name", "dob" and "_id fields"
   try {
-    const person = await PersonService.getAll(req.user._id);
-
-    res.json({ data: person });
+    const people = await PersonService.getAll(req.user._id);
+    res.json({ data: people });
   } catch (error) {
     next(error);
   }
 };
 
-// returns Person
+// returns one person specified by id
 const getOne = async (req, res, next) => {
   try {
     const personId = req.params.id;
@@ -23,26 +23,83 @@ const getOne = async (req, res, next) => {
   }
 };
 
+// Create new Person for the logged in user
 const create = async (req, res, next) => {
   try {
     const { name, dateOfBirth } = req.sanitizedBody;
-
-    //TODO:
-    //right now, we have objectId parameter, which is used for differentiate different google user//and we have to add google user to the data when they try to create sth (under their acc)
     const createdPerson = await PersonService.create(
       name,
       dateOfBirth,
       req.user._id
     );
-    console.log(createdPerson);
     res.status(201).json({ data: createdPerson });
   } catch (error) {
     next(error);
   }
 };
+
+// Patch/Update a Person entry
+const update = async (req, res, next) => {
+  const ownerId = req.user._id;
+  const personId = req.params.id;
+
+  try {
+    const updatedPerson = await PersonService.update(
+      personId,
+      req.sanitizedBody,
+      ownerId
+    );
+
+    res.json({ data: updatedPerson });
+  } catch (error) {
+    next(error);
+  }
+};
+
+//Delete a Person entry
+const deleteOne = async (req, res, next) => {
+  try {
+    const deletedPerson = await PersonService.deleteOne(
+      req.params.id,
+      req.user._id
+    );
+    res.json({ data: deletedPerson });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get all gifts under a person
+const getAllGifts = async (req, res, next) => {
+  const ownerId = req.user._id;
+  const { id } = req.params;
+
+  try {
+    const gifts = await PersonService.getAllGifts(id, ownerId);
+    res.json({ data: gifts });
+  } catch (error) {
+    next(error);
+  }
+};
+
+//Get one gift
+// returns one person specified by id
+const getOneGift = async (req, res, next) => {
+  try {
+    const { id, giftId } = req.params;
+    // const personId = req.params.id;
+    const userId = req.user._id;
+    const gift = await PersonService.getOneGift(id, giftId, userId);
+    res.json({ data: gift });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Create a new Gift object under a person
 const createGift = async (req, res, next) => {
   try {
-    const personId = req.params.personId;
+    const personId = req.params.id;
     const { name, url, store } = req.sanitizedBody;
     const ownerId = req.user._id;
 
@@ -58,31 +115,15 @@ const createGift = async (req, res, next) => {
     next(error);
   }
 };
-const update = async (req, res, next) => {
-  // console.log('val', req.params.id, req.sanitizedBody);
-  const ownerId = req.user._id;
-  const personId = req.params.id;
 
-  try {
-    const updatedGift = await PersonService.update(
-      personId,
-      req.sanitizedBody,
-      ownerId
-    );
-
-    res.json({ data: updatedGift });
-  } catch (error) {
-    next(error);
-  }
-};
 const updateGift = async (req, res, next) => {
   // console.log('val', req.params.id, req.sanitizedBody);
 
-  const { giftId, personId } = req.params;
+  const { giftId, id } = req.params;
   const ownerId = req.user._id;
   try {
     const updatedGift = await PersonService.updateGift(
-      personId,
+      id,
       ownerId,
       giftId,
       req.sanitizedBody
@@ -93,27 +134,15 @@ const updateGift = async (req, res, next) => {
     next(error);
   }
 };
-const deleteOne = async (req, res, next) => {
-  try {
-    const deletedPerson = await PersonService.deleteOne(
-      req.params.id,
-      req.user._id
-    );
-    console.log(deletedPerson);
-    res.json({ data: deletedPerson });
-  } catch (error) {
-    next(error);
-  }
-};
 
 const deleteOneGift = async (req, res, next) => {
   const ownerId = req.user._id;
 
   try {
-    const { personId, giftId } = req.params;
+    const { id, giftId } = req.params;
 
-    const person = await PersonService.deleteOneGift(personId, giftId, ownerId);
-    res.json({ data: person });
+    const deletedGift = await PersonService.deleteOneGift(id, giftId, ownerId);
+    res.json({ data: deletedGift });
   } catch (error) {
     next(error);
   }
@@ -128,4 +157,6 @@ module.exports = {
   updateGift,
   deleteOne,
   deleteOneGift,
+  getAllGifts,
+  getOneGift,
 };

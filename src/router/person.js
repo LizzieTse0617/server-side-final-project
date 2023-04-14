@@ -7,13 +7,17 @@ const isAuthenticated = require('../middleware/isAuthenticated');
 const personRouter = Router();
 personRouter.use(isAuthenticated);
 
+// Person Router
 personRouter.get('/', PersonController.getAll);
 personRouter.get('/:id', PersonController.getOne);
-personRouter.post('/', PersonController.create); // person page
-personRouter.post('/:personId', PersonController.createGift); //person to create gift
+personRouter.post('/', PersonController.create);
 personRouter.patch('/:id', PersonController.update);
-personRouter.patch('/:personId/:giftId', PersonController.updateGift);
 personRouter.delete('/:id', PersonController.deleteOne);
-personRouter.delete('/:personId/:giftId', PersonController.deleteOneGift); //delete one gift
 
+// Gift Router
+personRouter.get('/:id/gifts', PersonController.getAllGifts);
+personRouter.get('/:id/gifts/:giftId', PersonController.getOneGift);
+personRouter.post('/:id/gifts', PersonController.createGift);
+personRouter.patch('/:id/gifts/:giftId', PersonController.updateGift);
+personRouter.delete('/:id/gifts/:giftId', PersonController.deleteOneGift);
 module.exports = personRouter;
