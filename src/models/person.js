@@ -22,7 +22,7 @@ const personSchema = new mongoose.Schema(
     dateOfBirth: { type: Date, required: true },
     gifts: [giftSchema],
   },
-  { timestamps: true }
+  { timestamps: true, validateBeforeSave: true }
 );
 
 module.exports = {
