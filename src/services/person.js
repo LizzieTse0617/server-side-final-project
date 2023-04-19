@@ -40,9 +40,8 @@ const createGift = async (personId, name, url, store, ownerId) => {
   const idObject = new mongoose.Types.ObjectId(ownerId);
 
   const person = await Person.findOne({ _id: personId, ownerId: idObject });
-  console.log(personId, ownerId);
+
   if (!person) {
-    //  TODO: revise the error message
     throw new ForbiddenError(`You are not the owner of this document`);
   }
 

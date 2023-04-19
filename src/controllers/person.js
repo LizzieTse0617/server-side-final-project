@@ -117,8 +117,6 @@ const createGift = async (req, res, next) => {
 };
 
 const updateGift = async (req, res, next) => {
-  // console.log('val', req.params.id, req.sanitizedBody);
-
   const { giftId, id } = req.params;
   const ownerId = req.user._id;
   try {

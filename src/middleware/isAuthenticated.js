@@ -6,9 +6,7 @@ const { UnauthorizedError, NotFoundError } = require('../utils/errors');
 
 const isAuthenticated = async (req, res, next) => {
   const rawToken = req.headers.authorization;
-  console.log(rawToken);
   const token = rawToken?.replace('Bearer ', '');
-  console.log(token);
 
   if (!token) {
     return next(new UnauthorizedError('JWT not found'));
@@ -16,7 +14,7 @@ const isAuthenticated = async (req, res, next) => {
 
   try {
     const { id } = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('id', id);
+
     const user = await User.findById(id);
 
     if (!user) {
@@ -24,7 +22,7 @@ const isAuthenticated = async (req, res, next) => {
     }
 
     req.user = user;
-    console.log(user);
+
     return next();
   } catch (error) {
     return next(new UnauthorizedError(error.message));
