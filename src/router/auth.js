@@ -14,6 +14,7 @@ authRouter.get('/google', (req, res, next) => {
   const { redirect_url } = req.query;
 
   console.log('RE-DIRECT URL', redirect_url);
+  console.log('REDIRECT_OBJET', req.query);
 
   const authenticator = passport.authenticate('google', {
     scope: ['profile'],
@@ -34,6 +35,7 @@ authRouter.get(
     // define redirectUrl from the state or default to '/api/pokemon'
     const redirectUrl = state ?? '/api/person';
     console.log('RE-DIRECT STATE URL', redirectUrl);
+    console.log('REDIRECT_STATE_OBJET', req.query);
 
     // get the user's id
     const id = req.user._id.toString();
