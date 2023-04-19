@@ -6,7 +6,7 @@ const giftSchema = new mongoose.Schema(
     url: { type: String },
     store: { type: String },
   },
-  { timestamps: true }
+  { timestamps: true, validateBeforeSave: true }
 );
 const personSchema = new mongoose.Schema(
   {
