@@ -25,7 +25,18 @@ const authRouter = require('./router/auth');
 require('./utils/db');
 
 const app = express();
-
+app.use(function (req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'GET,POST,PUT,DELETE,OPTIONS,PATCH'
+  );
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Content-Type, Access-Control-Allow-Headers'
+  );
+  next();
+});
 app.use(helmet());
 app.use(compression());
 app.use(expressSanitize());
